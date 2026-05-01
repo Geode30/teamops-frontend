@@ -6,16 +6,12 @@ import { getErrorMessage } from "../utils/getErrorMessage";
 import { setAccessToken } from "../api/client.api";
 import LoadingOverlay from "./LoadingOverlay";
 
-const MIN_LOADING_TIME = 800; // 👈 adjust this
-
 const ProtectedRoute = () => {
   const { token, setToken } = useAuth();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const tryRefresh = async () => {
-      const start = Date.now();
-
       try {
         if (!token?.access) {
           const data = await refreshToken();
@@ -25,12 +21,7 @@ const ProtectedRoute = () => {
         console.log(getErrorMessage(err));
         setToken(null);
       } finally {
-        const elapsed = Date.now() - start;
-        const remaining = MIN_LOADING_TIME - elapsed;
-
-        setTimeout(() => {
-          setLoading(false);
-        }, Math.max(remaining, 0));
+        setLoading(false);
       }
     };
 

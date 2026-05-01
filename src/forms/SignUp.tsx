@@ -4,7 +4,7 @@ import FormInput from "../components/FormInput";
 import PrimaryButton from "../components/PrimaryButton";
 import AuthSwitchLink from "../components/AuthSwitchLink";
 import { validateSignup } from "../utils/validators/SignUp";
-import type { Notification } from "../types/notification";
+import { useNotification } from "../context/NotificationContext";
 import { getErrorMessage } from "../utils/getErrorMessage";
 
 import { signup } from "../api/auth";
@@ -17,11 +17,8 @@ export interface SignupFormData {
   confirmPassword: string;
 }
 
-interface SignupFormProps {
-  setNotification: (notif: Notification) => void;
-}
-
-export default function SignupForm({ setNotification }: SignupFormProps) {
+export default function SignupForm() {
+  const { setNotification } = useNotification();
   const [form, setForm] = useState<SignupFormData>({
     first_name: "",
     last_name: "",

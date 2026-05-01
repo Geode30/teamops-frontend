@@ -1,6 +1,29 @@
 import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getProjectsIdName } from "../api/dashboard";
+import { getErrorMessage } from "../utils/getErrorMessage";
+
+type ProjectIdName = {
+    id: number | string;
+    name: string;
+};
 
 export default function ProjectSidebar() {
+    const [projectsIdName, setProjectsIdName] = useState<ProjectIdName[]>([]);
+
+    useEffect(() => {
+        const tryGetProjects = async () => {
+          try {
+            const data = await getProjectsIdName();
+            setProjectsIdName(data);
+          } catch (err) {
+            console.log(getErrorMessage(err))
+          }
+        };
+    
+        tryGetProjects();
+      }, []);
+
     return (
         <div className="flex flex-col gap-4">
 
@@ -15,19 +38,15 @@ export default function ProjectSidebar() {
 
             {/* Project list */}
             <div className="flex flex-col gap-2 mt-2">
-                <button className="text-left px-2 py-1 rounded hover:bg-white/10">
-                    Project Alpha
-                </button>
-
-                <button className="text-left px-2 py-1 rounded hover:bg-white/10">
-                    Project Beta
-                </button>
-
-                <button className="text-left px-2 py-1 rounded hover:bg-white/10">
-                    Project Gamma
-                </button>
+                {projectsIdName.map((project) => (
+                    <button
+                        key={project.id}
+                        className="text-left px-2 py-1 rounded hover:bg-white/10"
+                    >
+                        {project.name}
+                    </button>
+                ))}
             </div>
-
         </div>
     );
 }

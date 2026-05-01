@@ -1,26 +1,31 @@
-import { useNavigate } from "react-router-dom";
-
 import DashboardLayout from "../layouts/Dashboard";
 import HeaderButton from "../components/HeaderButton";
 import ProjectSidebar from "../components/ProjectSidebar";
 import { logout } from "../api/auth";
 import { getErrorMessage } from "../utils/getErrorMessage";
 import { useAuth } from "../hooks/useAuth";
+import { useNotification } from "../context/NotificationContext";
+import NotificationToast from "../components/NotificationToast";
 
 export default function DashboardPage() {
+    const { setNotification } = useNotification()
     const { setToken } = useAuth()
-    const navigate = useNavigate();
 
     const handleLogout = async () => {
         try {
             await logout();
+            setNotification({
+                type: "success",
+                message: "Logged out successfully",
+            });
             setToken(null)
-            navigate("/login");
         } catch (error) {
-            console.log(getErrorMessage(error))
+            setNotification({
+                type: "error",
+                message: getErrorMessage(error),
+            });
         }
     };
-
 
     return (
         <DashboardLayout
@@ -41,6 +46,7 @@ export default function DashboardPage() {
             }
 
         >
+            <NotificationToast />
             <div>
                 Main content goes here
             </div>

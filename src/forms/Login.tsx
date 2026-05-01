@@ -1,28 +1,23 @@
 import { useState } from "react";
 import type { ChangeEvent, SyntheticEvent  } from "react";
-import { useNavigate } from "react-router-dom";
 
 import FormInput from "../components/FormInput";
 import PrimaryButton from "../components/PrimaryButton";
 import AuthSwitchLink from "../components/AuthSwitchLink";
 import { validateLogin } from "../utils/validators/Login";
 import { login } from "../api/auth";
-import type { Notification } from "../types/notification";
 import { getErrorMessage } from "../utils/getErrorMessage";
 import { useAuth } from "../hooks/useAuth";
+import { useNotification } from "../context/NotificationContext";
 
 export interface LoginFormData {
   username: string;
   password: string;
 }
 
-interface LoginFormProps {
-  setNotification: (notif: Notification) => void;
-}
-
-export default function LoginForm({ setNotification } : LoginFormProps) {
-  const { setToken } = useAuth()
-  const navigate = useNavigate();
+export default function LoginForm() {
+  const { setNotification } = useNotification();
+  const { setToken } = useAuth();
 
   const [form, setForm] = useState<LoginFormData>({
     username: "",
@@ -42,36 +37,32 @@ export default function LoginForm({ setNotification } : LoginFormProps) {
     e.preventDefault();
 
     const error = validateLogin(form);
-
     if (error) {
       setNotification({ type: "error", message: error });
       return;
     }
 
-    const payload = {
-      username: form.username,
-      password: form.password,
-    }
-
     try {
-      const response = await login(payload);
-
-      setToken({
-        access: response.access
+      const response = await login({
+        username: form.username,
+        password: form.password,
       });
 
       setNotification({
         type: "success",
         message: "Login successful!",
       });
-      navigate("/dashboard");
+      setToken({
+        access: response.access,
+      });
+
     } catch (err: unknown) {
       setNotification({
         type: "error",
         message: getErrorMessage(err),
       });
     }
-  };
+}
 
   return (
     <div className="w-full max-w-md bg-[#121212] border-2 border-white p-8 rounded-2xl shadow-md">        
