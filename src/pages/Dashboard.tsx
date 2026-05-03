@@ -1,15 +1,45 @@
+import { useEffect, useState } from "react";
+import { FaUserCircle } from "react-icons/fa";
+
 import DashboardLayout from "../layouts/Dashboard";
 import HeaderButton from "../components/HeaderButton";
 import ProjectSidebar from "../components/ProjectSidebar";
-import { logout } from "../api/auth";
+import { currentUser, logout } from "../api/auth";
 import { getErrorMessage } from "../utils/getErrorMessage";
 import { useAuth } from "../hooks/useAuth";
 import { useNotification } from "../context/NotificationContext";
 import NotificationToast from "../components/NotificationToast";
+import ConfirmModal from "../components/ConfirmModal";
+import ProfileModal from "../components/ProfileModal";
+import { setAccessToken } from "../api/client.api";
 
 export default function DashboardPage() {
     const { setNotification } = useNotification()
     const { setToken } = useAuth()
+    const { user, setUser } = useAuth()
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
+    const [showProfileModal, setShowProfileModal] = useState(false);
+
+    useEffect(() => {
+        const getCurrentUser = async () => {
+          try {
+            const data = await currentUser();
+            setUser({
+                id: data.id,
+                username: data.username,
+                firstName: data.first_name,
+                lastName: data.last_name
+            })
+          } catch (error) {
+            setNotification({
+                type: "error",
+                message: getErrorMessage(error),
+            });
+          }
+        };
+    
+        getCurrentUser();
+      }, []);
 
     const handleLogout = async () => {
         try {
@@ -18,6 +48,7 @@ export default function DashboardPage() {
                 type: "success",
                 message: "Logged out successfully",
             });
+            setAccessToken(null)
             setToken(null)
         } catch (error) {
             setNotification({
@@ -39,13 +70,34 @@ export default function DashboardPage() {
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <HeaderButton>Profile</HeaderButton>
-                        <HeaderButton onClick={handleLogout}>Logout</HeaderButton>
+                        <HeaderButton className="flex items-center gap-4" onClick={() => setShowProfileModal(true)}>
+                            <FaUserCircle className="text-xl" />
+                            <span>{user?.firstName || "Profile"}</span>
+                        </HeaderButton>
+                        <HeaderButton onClick={() => setShowLogoutModal(true)}>Logout</HeaderButton>
                     </div>
                 </div>
             }
 
         >
+            <ProfileModal 
+                open={showProfileModal}
+                user={user}
+                onClose={async () => {
+                    setShowProfileModal(false);
+                }}
+            />
+
+            <ConfirmModal
+                open={showLogoutModal}
+                title="Confirm Logout"
+                message="Are you sure you want to log out of your account?"
+                onCancel={() => setShowLogoutModal(false)}
+                onConfirm={async () => {
+                    setShowLogoutModal(false);
+                    await handleLogout();
+                }}
+            />
             <NotificationToast />
             <div>
                 Main content goes here

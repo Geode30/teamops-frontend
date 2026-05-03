@@ -35,11 +35,28 @@ export const getApiErrorMessage = (error: AxiosError<ApiErrorResponse>): string 
 
 export function handleApiError(error: unknown): never {
   if (axios.isAxiosError(error)) {
-    const err = error as AxiosError<ApiErrorResponse>;
+    const err = error as AxiosError<Record<string, any>>;
+    const data = err.response?.data;
+
+    let message = "Request failed";
+
+    if (data && typeof data === "object") {
+      // Try "message" first
+      if (typeof data.message === "string") {
+        message = data.message;
+      } else {
+        // Fallback to field errors
+        const fieldErrors = Object.values(data).flat();
+
+        if (fieldErrors.length > 0) {
+          message = String(fieldErrors[0]);
+        }
+      }
+    }
 
     throw {
       status: err.response?.status ?? 0,
-      message: err.response?.data?.message ?? "Request failed",
+      message,
     };
   }
 

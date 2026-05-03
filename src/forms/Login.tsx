@@ -9,6 +9,7 @@ import { login } from "../api/auth";
 import { getErrorMessage } from "../utils/getErrorMessage";
 import { useAuth } from "../hooks/useAuth";
 import { useNotification } from "../context/NotificationContext";
+import { setAccessToken } from "../api/client.api";
 
 export interface LoginFormData {
   username: string;
@@ -52,6 +53,7 @@ export default function LoginForm() {
         type: "success",
         message: "Login successful!",
       });
+      setAccessToken(response.access)
       setToken({
         access: response.access,
       });

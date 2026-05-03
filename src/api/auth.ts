@@ -43,7 +43,16 @@ export const logout = async () => {
 
 export const refreshToken = async () => {
   try {
-    const response = await api.post("/token/refresh/");
+    const response = await publicApi.post("/token/refresh/");
+    return response.data;
+  } catch (error) {
+    handleApiError(error);
+  }
+};
+
+export const currentUser = async () => {
+  try {
+    const response = await api.get("/me/user/");
     return response.data;
   } catch (error) {
     handleApiError(error);
