@@ -4,6 +4,7 @@ import { FaUserCircle } from "react-icons/fa";
 import DashboardLayout from "../layouts/Dashboard";
 import HeaderButton from "../components/HeaderButton";
 import ProjectSidebar from "../components/ProjectSidebar";
+import ProjectMainContent from "../components/ProjectMainContent";
 import { currentUser, logout } from "../api/auth";
 import { getErrorMessage } from "../utils/getErrorMessage";
 import { useAuth } from "../hooks/useAuth";
@@ -19,6 +20,7 @@ export default function DashboardPage() {
     const { user, setUser } = useAuth()
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [showProfileModal, setShowProfileModal] = useState(false);
+    const [selectedProjectId, setSelectedProjectId] = useState<number | string | null>(null);
 
     useEffect(() => {
         const getCurrentUser = async () => {
@@ -61,7 +63,9 @@ export default function DashboardPage() {
     return (
         <DashboardLayout
 
-            sidebar={<ProjectSidebar />}
+            sidebar={<ProjectSidebar 
+                selectedProjectId={selectedProjectId} 
+                setSelectedProjectId={setSelectedProjectId} />}
 
             header={
                 <div className="flex items-center justify-between px-6 py-4">
@@ -99,9 +103,7 @@ export default function DashboardPage() {
                 }}
             />
             <NotificationToast />
-            <div>
-                Main content goes here
-            </div>
+            <ProjectMainContent selectedProjectId={selectedProjectId} />
         </DashboardLayout>
     );
 }

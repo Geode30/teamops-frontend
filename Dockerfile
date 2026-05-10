@@ -1,15 +1,15 @@
 # Use Node base image
-FROM node:20-alpine
+FROM node:20-slim
+
+# Install git and other common dev tools
+RUN apt-get update && apt-get install -y \
+    git \
+    procps \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
-
-RUN apk update
-
-RUN apk add git
-
-RUN apk add git ca-certificates
-RUN update-ca-certificates
 
 # Install dependencies first (better caching)
 COPY package*.json ./
