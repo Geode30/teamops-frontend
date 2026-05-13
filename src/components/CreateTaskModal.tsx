@@ -74,7 +74,7 @@ export default function CreateTaskModal({
         };
 
         try {
-            const data =await createTask(payload);
+            const data = await createTask(payload);
             onTaskCreated(data);
             setNotification({
                 type: "success",

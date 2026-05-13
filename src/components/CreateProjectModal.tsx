@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getErrorMessage } from "../utils/getErrorMessage";
 import { getUsersIDName } from "../api/dashboard";
 import { createProject } from "../api/dashboard";
+import type { CreateProjectPayload } from "../api/dashboard";
 import { useNotification } from "../context/NotificationContext";
 
 type Props = {
@@ -27,12 +28,12 @@ export default function CreateProjectModal({
     const [users, setUsers] = useState<User[]>([]);
     const [memberSearch, setMemberSearch] = useState("");
 
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<CreateProjectPayload>({
         name: "",
         description: "",
         status: "active",
         priority: "low",
-        deadline: "",
+        deadline: null,
         members: [] as number[],
     });
 
@@ -163,7 +164,7 @@ export default function CreateProjectModal({
                     <input
                         type="datetime-local"
                         name="deadline"
-                        value={formData.deadline}
+                        value={formData.deadline ?? ""}
                         onChange={handleChange}
                         className="bg-black/30 border border-white/10 rounded-lg px-3 py-2 [color-scheme:dark]"
                     />

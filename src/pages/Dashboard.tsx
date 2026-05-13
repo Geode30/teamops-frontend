@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
+import { BiLogOut } from "react-icons/bi";
+import { FiLogOut } from "react-icons/fi";
 
 import DashboardLayout from "../layouts/Dashboard";
 import HeaderButton from "../components/HeaderButton";
@@ -67,21 +69,46 @@ export default function DashboardPage() {
                 selectedProjectId={selectedProjectId} 
                 setSelectedProjectId={setSelectedProjectId} />}
 
-            header={
-                <div className="flex items-center justify-between px-6 py-4">
-                    <div className="text-xl font-bold">
-                        TeamOps
+            header={({ openMobileMenu }) => (
+                <div className="flex items-center justify-between px-4 md:px-6 py-4">
+
+                    {/* LEFT SIDE */}
+                    <div className="flex items-center gap-3">
+                        
+                        {/* MOBILE MENU BUTTON */}
+                        <button
+                            className="md:hidden text-2xl"
+                            onClick={openMobileMenu}
+                        >
+                            ☰
+                        </button>
+
+                        <div className="text-lg md:text-xl font-bold">
+                            TeamOps
+                        </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
-                        <HeaderButton className="flex items-center gap-4" onClick={() => setShowProfileModal(true)}>
-                            <FaUserCircle className="text-xl" />
-                            <span>{user?.firstName || "Profile"}</span>
+                    {/* RIGHT SIDE */}
+                    <div className="flex items-center gap-2 md:gap-3">
+                        <HeaderButton
+                            onClick={() => setShowProfileModal(true)}
+                            className="flex items-center gap-2 leading-none"
+                        >
+                            <FaUserCircle className="text-xl block" />
+                            <span className="hidden md:inline">
+                                {user?.firstName || "Profile"}
+                            </span>
                         </HeaderButton>
-                        <HeaderButton onClick={() => setShowLogoutModal(true)}>Logout</HeaderButton>
+
+                        <HeaderButton 
+                        onClick={() => setShowLogoutModal(true)} 
+                        className="flex items-center gap-2 leading-none">
+                            <FiLogOut className="text-xl" />
+                            <span className="hidden md:inline">Logout</span>
+                        </HeaderButton>
                     </div>
                 </div>
-            }
+            )}
 
         >
             <ProfileModal 

@@ -21,7 +21,19 @@ export const getUsersIDName = async () => {
   }
 };
 
-export const createProject = async (payload) => {
+type CreateProjectStatus = "active" | "completed";
+type CreateProjectPriority = "high" | "medium" | "low";
+
+export type CreateProjectPayload ={
+  name: string;
+  description: string;
+  status: CreateProjectStatus;
+  priority: CreateProjectPriority;
+  deadline: string | null;
+  members: number[];
+}
+
+export const createProject = async (payload: CreateProjectPayload) => {
   try {
     const response = await api.post("/project/", payload);
 
@@ -31,7 +43,7 @@ export const createProject = async (payload) => {
   }
 };
 
-export const getTasks = async (query_params) => {
+export const getTasks = async (query_params: Record<string, string | number>) => {
   try {
     const response = await api.get("/task/", {
       params: query_params,
@@ -43,9 +55,27 @@ export const getTasks = async (query_params) => {
   }
 };
 
-export const createTask = async (payload) => {
+type CreateTaskPayload = {
+  project: string | number;
+  name: string;
+  description: string;
+  status: string;
+  assigned_to: number | null;
+}
+
+export const createTask = async (payload: CreateTaskPayload) => {
   try {
     const response = await api.post("/task/", payload);
+
+    return response.data;
+  } catch (error) {
+    handleApiError(error);
+  }
+};
+
+export const partialUpdateTask = async (payload: {status: string}, taskId: number) => {
+  try {
+    const response = await api.patch(`/task/${taskId}/`, payload);
 
     return response.data;
   } catch (error) {
