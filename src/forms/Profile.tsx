@@ -6,13 +6,22 @@ import { updateUser } from "../api/user";
 import { getErrorMessage } from "../utils/getErrorMessage";
 import FormInput from "../components/FormInput";
 import { useAuth } from "../hooks/useAuth";
+import type { User } from "../context/auth.context";
 
 export interface ProfileFormData {
   firstName: string,
   lastName: string
 }
 
-export default function ProfileForm({ user, onClose }) {
+type ProfileFormProps = {
+  user: User;
+  onClose: () => void;
+};
+
+export default function CredentialsForm({
+  user,
+  onClose,
+}: ProfileFormProps) {
   const { setNotification } = useNotification();
   const { setUser } = useAuth();
 

@@ -5,6 +5,7 @@ import { getErrorMessage } from "../utils/getErrorMessage";
 import { validateCredentials } from "../utils/validators/Credentials";
 import { updateCredentials } from "../api/user";
 import FormInput from "../components/FormInput";
+import type { User } from "../context/auth.context";
 
 export interface CredentialsFormData {
   username: string,
@@ -12,7 +13,15 @@ export interface CredentialsFormData {
   confirmPassword: string
 }
 
-export default function CredentialsForm({ user, onClose }) {
+type CredentialsFormProps = {
+  user: User;
+  onClose: () => void;
+};
+
+export default function CredentialsForm({
+  user,
+  onClose,
+}: CredentialsFormProps) {
   const { setNotification } = useNotification();
 
   const [form, setForm] = useState<CredentialsFormData>({

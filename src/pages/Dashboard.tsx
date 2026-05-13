@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
-import { BiLogOut } from "react-icons/bi";
 import { FiLogOut } from "react-icons/fi";
 
 import DashboardLayout from "../layouts/Dashboard";

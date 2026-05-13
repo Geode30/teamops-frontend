@@ -1,14 +1,25 @@
+import React from "react";
+
+type ConfirmModalProps = {
+  open: boolean;
+  title: string;
+  message: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+};
+
 export default function ConfirmModal({
   open,
   title,
   message,
   onConfirm,
   onCancel,
-}) {
+}: ConfirmModalProps) {
   if (!open) return null;
 
-  const handleOverlayClick = (e) => {
-    // only close if user clicked the background, not the modal box
+  const handleOverlayClick = (
+    e: React.MouseEvent<HTMLDivElement>
+  ) => {
     if (e.target === e.currentTarget) {
       onCancel();
     }
@@ -20,7 +31,6 @@ export default function ConfirmModal({
       onClick={handleOverlayClick}
     >
       <div className="bg-[#1E1E1E] border border-white/10 rounded-lg p-6 w-[90%] max-w-md shadow-xl">
-        
         <h2 className="text-lg font-semibold text-white mb-2">
           {title}
         </h2>
@@ -44,7 +54,6 @@ export default function ConfirmModal({
             Logout
           </button>
         </div>
-
       </div>
     </div>
   );

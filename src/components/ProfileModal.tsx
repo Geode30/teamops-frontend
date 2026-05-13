@@ -2,11 +2,24 @@ import { useState } from "react";
 
 import ProfileForm from "../forms/Profile";
 import CredentialsForm from "../forms/Credentials";
+import type { User } from "../context/auth.context";
 
-export default function ProfileModal({ open, user, onClose }) {
-  const [tab, setTab] = useState("profile");
+type ProfileModalProps = {
+  open: boolean;
+  user: User | null;
+  onClose: () => void;
+};
 
-  if (!open) return null;
+export default function ProfileModal({
+  open,
+  user,
+  onClose,
+}: ProfileModalProps) {
+  const [tab, setTab] = useState<"profile" | "credentials">(
+    "profile"
+  );
+
+  if (!open || !user) return null;
 
   return (
     <div
@@ -38,7 +51,7 @@ export default function ProfileModal({ open, user, onClose }) {
 
         {/* Content */}
         {tab === "profile" && (
-          <ProfileForm user={user} onClose={onClose}  />
+          <ProfileForm user={user} onClose={onClose} />
         )}
 
         {tab === "credentials" && (

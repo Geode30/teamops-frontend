@@ -15,7 +15,9 @@ export interface AuthContextType {
   token: AccessToken | null;
   setToken: (token: AccessToken | null) => void;
   user: User | null;
-  setUser: (user: User | null) => void;
+  setUser: React.Dispatch<
+    React.SetStateAction<User | null>
+  >;
   isAuthenticated: boolean;
 }
 
