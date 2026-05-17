@@ -8,7 +8,7 @@ export function validateSignup(form: SignupFormData): string | null {
   }
 
   // FIRST + LAST NAME VALIDATION
-  const nameRegex = /^[A-Za-zÀ-ÿ]+(?:'[A-Za-zÀ-ÿ]+)?$/;
+  const nameRegex = /^[A-Za-zÀ-ÿ]+(?:[ '\-][A-Za-zÀ-ÿ]+)*$/;
 
   if (!nameRegex.test(form.first_name) || !nameRegex.test(form.last_name)) {
     return "First name and Last name can only contain letters and apostrophes";
