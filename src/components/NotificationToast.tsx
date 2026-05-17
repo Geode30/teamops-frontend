@@ -7,7 +7,7 @@ export default function NotificationToast() {
   if (!notification) return null;
 
   return (
-    <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50">
+    <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[9999]">
       <Alert
         variant={notification.type}
         message={notification.message}

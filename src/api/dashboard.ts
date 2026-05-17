@@ -73,9 +73,33 @@ export const createTask = async (payload: CreateTaskPayload) => {
   }
 };
 
-export const partialUpdateTask = async (payload: {status: string}, taskId: number) => {
+export const partialUpdateTask = async <T extends object>(
+  payload: T,
+  taskId: number
+  ) => {
+    try {
+      const response = await api.patch(`/task/${taskId}/`, payload);
+      return response.data;
+    } catch (error) {
+      handleApiError(error);
+    }
+};
+
+export const createProgressNote = async (payload: {task: number, note: string}) => {
   try {
-    const response = await api.patch(`/task/${taskId}/`, payload);
+    const response = await api.post("/progress_note/", payload);
+
+    return response.data;
+  } catch (error) {
+    handleApiError(error);
+  }
+};
+
+export const getProgressNotes = async (query_params: Record<string, string | number>) => {
+  try {
+    const response = await api.get("/progress_note/", {
+      params: query_params,
+    });
 
     return response.data;
   } catch (error) {

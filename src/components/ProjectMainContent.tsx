@@ -6,6 +6,7 @@ import { getTasks, partialUpdateTask } from "../api/dashboard";
 import { getErrorMessage } from "../utils/getErrorMessage";
 import { useNotification } from "../context/NotificationContext";
 import CreateTaskModal from "./CreateTaskModal";
+import TaskModal from "./TaskModal";
 
 export type Task = {
     id: number;
@@ -13,7 +14,9 @@ export type Task = {
     description: string;
     status: string;
     full_name: string;
-    assigned_to_full_name: string | null;
+    assigned_to_full_name?: string;
+    assigned_to?: number;
+    created_by_full_name: string;
 }
 
 interface DroppableColumnProps {
@@ -22,7 +25,12 @@ interface DroppableColumnProps {
   children: React.ReactNode;
 }
 
-const DraggableTask = ({ task }: { task: Task }) => {
+type DraggableTaskProps = {
+    task: Task;
+    onClick: (task: Task) => void;
+};
+
+const DraggableTask = ({ task, onClick }: DraggableTaskProps) => {
     const {
         attributes,
         listeners,
@@ -37,6 +45,7 @@ const DraggableTask = ({ task }: { task: Task }) => {
         ref={setNodeRef}
         {...listeners}
         {...attributes}
+        onClick={() => onClick(task)}
         style={{
             opacity: isDragging ? 0 : 1,
         }}
@@ -141,6 +150,7 @@ export default function ProjectMainContent({
     const [tasks, setTasks] = useState<Task[]>([]);
     const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
     const [activeTask, setActiveTask] = useState<Task | null>(null);
+    const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
     useEffect(() => {
         if (!selectedProjectId) return;
@@ -217,10 +227,16 @@ export default function ProjectMainContent({
     const totalTasks = tasks.length;
     const completedTasks = tasks.filter(t => t.status === "done").length;
     const progress = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
+    const liveTask = tasks.find((t) => t.id === selectedTask?.id) || selectedTask;
 
     return (
         <div className="h-full bg-[#121212] p-6 overflow-x-hidden">
-
+            <TaskModal
+                task={liveTask}
+                setTasks={setTasks}
+                onClose={() => setSelectedTask(null)}
+            />
+            
             {!selectedProjectId ? (
                 <div className="h-full flex items-center justify-center">
                     <div className="text-center max-w-md">
@@ -297,6 +313,7 @@ export default function ProjectMainContent({
                                         <DraggableTask
                                             key={task.id}
                                             task={task}
+                                            onClick={setSelectedTask}
                                         />
                                     ))}
                             </DroppableColumn>
@@ -313,6 +330,7 @@ export default function ProjectMainContent({
                                         <DraggableTask
                                             key={task.id}
                                             task={task}
+                                            onClick={setSelectedTask}
                                         />
                                     ))}
                             </DroppableColumn>
@@ -324,6 +342,7 @@ export default function ProjectMainContent({
                                         <DraggableTask
                                             key={task.id}
                                             task={task}
+                                            onClick={setSelectedTask}
                                         />
                                     ))}
                             </DroppableColumn>
