@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import FormInput from "../components/FormInput";
 import PrimaryButton from "../components/PrimaryButton";
@@ -6,8 +7,6 @@ import AuthSwitchLink from "../components/AuthSwitchLink";
 import { validateSignup } from "../utils/validators/SignUp";
 import { useNotification } from "../context/NotificationContext";
 import { getErrorMessage } from "../utils/getErrorMessage";
-import { useAuth } from "../hooks/useAuth";
-import { setAccessToken } from "../api/client.api";
 
 import { signup } from "../api/auth";
 
@@ -20,7 +19,7 @@ export interface SignupFormData {
 }
 
 export default function SignupForm() {
-  const { setToken } = useAuth();
+  const navigate = useNavigate();
   const { setNotification } = useNotification();
   const [form, setForm] = useState<SignupFormData>({
     first_name: "",
@@ -58,17 +57,14 @@ export default function SignupForm() {
     }
 
     try {
-      const response = await signup(payload);
+      await signup(payload);
 
       setNotification({
         type: "success",
         message: "Signup successful!",
       });
 
-      setAccessToken(response.tokens.access)
-      setToken({
-        access: response.tokens.access,
-      });
+      navigate("/login");
 
     } catch (err: unknown) {
 
