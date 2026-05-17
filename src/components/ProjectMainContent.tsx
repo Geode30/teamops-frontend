@@ -220,108 +220,147 @@ export default function ProjectMainContent({
 
     return (
         <div className="h-full bg-[#121212] p-6 overflow-x-hidden">
-            <div className="flex items-start justify-between mb-6">
 
-                {/* Left: Progress */}
-                <div className="flex-1 mr-4">
-                    <div className="flex items-center justify-between mb-2">
-                    <h1 className="text-white text-lg font-semibold">Project Progress</h1>
-                    <span className="text-sm text-gray-400">
-                        {completedTasks} / {totalTasks} completed
-                    </span>
+            {!selectedProjectId ? (
+                <div className="h-full flex items-center justify-center">
+                    <div className="text-center max-w-md">
+                        
+                        <div className="text-5xl mb-4">🗁</div>
+
+                        <h2 className="text-white text-xl font-semibold mb-2">
+                            No Project Selected
+                        </h2>
+
+                        <p className="text-gray-400 text-sm">
+                            Select a project from the sidebar to view tasks and track progress.
+                        </p>
+
                     </div>
+                </div> 
+            ) : (
+                <>
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-6">
 
-                    <div className="w-full h-2 bg-[#1e1e1e] rounded-full overflow-hidden">
-                    <div
-                        className="h-full bg-green-500 transition-all"
-                        style={{ width: `${progress}%` }}
-                    />
-                    </div>
+                        {/* Left: Progress */}
+                        <div className="flex-1 mr-4">
+                            <div className="flex items-center justify-between mb-2">
+                                <h1 className="text-white text-lg font-semibold">
+                                    Project Progress
+                                </h1>
 
-                    <div className="text-xs text-gray-500 mt-1">
-                    {progress}% complete
-                    </div>
-                </div>
-
-                {/* Right: Add Task Button */}
-                <button
-                    className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-md transition-colors"
-                    onClick={() => setIsCreateTaskModalOpen(true)}
-                >
-                    + Add Task
-                </button>
-
-            </div>
-
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 h-auto xl:h-[calc(100vh-220px)]">
-
-                {/* To Do */}
-                <DndContext
-                sensors={sensors}
-                collisionDetection={closestCorners}
-                onDragStart={(event) => {
-                    const task = tasks.find((t) => t.id === event.active.id);
-                    setActiveTask(task || null);
-                }}
-                onDragEnd={handleDragEnd}
-                onDragCancel={() => setActiveTask(null)}
-                >
-                    <DroppableColumn id="todo" title="To Do">
-                        {tasks
-                            .filter((t) => t.status === "todo")
-                            .map((task) => (
-                            <DraggableTask key={task.id} task={task} />
-                        ))}
-                    </DroppableColumn>
-
-                    {/* In Progress */}
-                    <DroppableColumn id="in_progress" title="In Progress">
-                        {tasks
-                            .filter((t) => t.status === "in_progress")
-                            .map((task) => (
-                            <DraggableTask key={task.id} task={task} />
-                        ))}
-                    </DroppableColumn>
-
-                    {/* Completed */}
-                    <DroppableColumn id="done" title="Completed">
-                        {tasks
-                            .filter((t) => t.status === "done")
-                            .map((task) => (
-                            <DraggableTask key={task.id} task={task} />
-                        ))}
-                    </DroppableColumn>
-                
-                    <DragOverlay>
-                        {activeTask ? (
-                            <div className="pointer-events-none w-full max-w-[300px] rotate-1 scale-105">
-                                <div className="bg-[#252525] border border-[#3a3a3a] p-3 rounded-lg shadow-2xl opacity-95">
-                                    
-                                    <div className="text-sm text-gray-200 font-medium leading-snug">
-                                        {activeTask.name}
-                                    </div>
-
-                                    {activeTask.description && (
-                                        <div className="text-xs text-gray-400 mt-1 line-clamp-2">
-                                            {activeTask.description}
-                                        </div>
-                                    )}
-                                </div>
+                                <span className="text-sm text-gray-400">
+                                    {completedTasks} / {totalTasks} completed
+                                </span>
                             </div>
-                        ) : null}
-                    </DragOverlay>
 
-                </DndContext>
-            </div>
+                            <div className="w-full h-2 bg-[#1e1e1e] rounded-full overflow-hidden">
+                                <div
+                                    className="h-full bg-green-500 transition-all"
+                                    style={{ width: `${progress}%` }}
+                                />
+                            </div>
 
-            <CreateTaskModal
-                isOpen={isCreateTaskModalOpen}
-                onClose={() => setIsCreateTaskModalOpen(false)}
-                projectId={selectedProjectId}
-                onTaskCreated={(newTask) => {
-                    setTasks((prev) => [newTask, ...prev]);
-                }}
-            />
+                            <div className="text-xs text-gray-500 mt-1">
+                                {progress}% complete
+                            </div>
+                        </div>
+
+                        {/* Right: Add Task Button */}
+                        <button
+                            className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-md transition-colors"
+                            onClick={() => setIsCreateTaskModalOpen(true)}
+                        >
+                            + Add Task
+                        </button>
+                    </div>
+
+                    {/* Board */}
+                    <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 h-auto xl:h-[calc(100vh-220px)]">
+
+                        <DndContext
+                            sensors={sensors}
+                            collisionDetection={closestCorners}
+                            onDragStart={(event) => {
+                                const task = tasks.find(
+                                    (t) => t.id === event.active.id
+                                );
+                                setActiveTask(task || null);
+                            }}
+                            onDragEnd={handleDragEnd}
+                            onDragCancel={() => setActiveTask(null)}
+                        >
+                            <DroppableColumn id="todo" title="To Do">
+                                {tasks
+                                    .filter((t) => t.status === "todo")
+                                    .map((task) => (
+                                        <DraggableTask
+                                            key={task.id}
+                                            task={task}
+                                        />
+                                    ))}
+                            </DroppableColumn>
+
+                            <DroppableColumn
+                                id="in_progress"
+                                title="In Progress"
+                            >
+                                {tasks
+                                    .filter(
+                                        (t) => t.status === "in_progress"
+                                    )
+                                    .map((task) => (
+                                        <DraggableTask
+                                            key={task.id}
+                                            task={task}
+                                        />
+                                    ))}
+                            </DroppableColumn>
+
+                            <DroppableColumn id="done" title="Completed">
+                                {tasks
+                                    .filter((t) => t.status === "done")
+                                    .map((task) => (
+                                        <DraggableTask
+                                            key={task.id}
+                                            task={task}
+                                        />
+                                    ))}
+                            </DroppableColumn>
+
+                            <DragOverlay>
+                                {activeTask ? (
+                                    <div className="pointer-events-none w-full max-w-[300px] rotate-1 scale-105">
+                                        <div className="bg-[#252525] border border-[#3a3a3a] p-3 rounded-lg shadow-2xl opacity-95">
+
+                                            <div className="text-sm text-gray-200 font-medium leading-snug">
+                                                {activeTask.name}
+                                            </div>
+
+                                            {activeTask.description && (
+                                                <div className="text-xs text-gray-400 mt-1 line-clamp-2">
+                                                    {activeTask.description}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                ) : null}
+                            </DragOverlay>
+                        </DndContext>
+                    </div>
+
+                    <CreateTaskModal
+                        isOpen={isCreateTaskModalOpen}
+                        onClose={() =>
+                            setIsCreateTaskModalOpen(false)
+                        }
+                        projectId={selectedProjectId}
+                        onTaskCreated={(newTask) => {
+                            setTasks((prev) => [newTask, ...prev]);
+                        }}
+                    />
+                </>
+            )}
         </div>
     );
 }
